@@ -3,20 +3,31 @@ const app = express()
 
 const port = 3001
 
-app.get("/", (req, res) => {
-    res.send("Hello world")
+app.use(logger); 
+
+app.get("/", (req, res, next) => {
+    res.send("Welcome to our express server")
 })
 
-app.get("/books", (req, res) => {
-    res.send({
-        "books": [
-            {"id" : 1, "name": "Gita" },
-            {"id" : 2, "name": "Ramayan" }, 
-            {"id" : 3, "name": "Bible" },
-            {"id" : 4, "name": "Kuran" }
-        ]
-    })
-})
+// Register of routing
+app.get("/books", allBooks)
+app.get("/book/:name", fetchingBook)
+
+
+function logger(req, res, next){
+    console.log(new Date(), req.method, req.path)
+    next()
+}
+
+function allBooks(req, res){
+     res.send("Fetching all books")
+}
+
+function fetchingBook(req, res){
+   req.name = req.params.name
+   return res.json({"Book Name" : req.name})
+}
+
 
 app.listen(port, () => {
     console.log(`Server is up and listening at port ${port}`)
